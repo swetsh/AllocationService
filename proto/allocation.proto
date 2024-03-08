@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option go_package = "./allocation";
+
+message Order {
+  string id = 1;
+  string details = 2;
+  OrderStatus status = 3;
+}
+
+enum OrderStatus {
+  CREATED = 0;
+  ASSIGNED = 1;
+  COMPLETED = 2;
+}
+
+message DeliveryPerson {
+  string id = 1;
+  string name = 2;
+}
+
+service AllocationService {
+  rpc AssignOrderToDeliveryPerson(Order) returns (Order) {}
+  rpc UpdateOrderStatus(Order) returns (Order) {}
+}
