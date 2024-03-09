@@ -4,3 +4,9 @@ generate_grpc_code:
 
 add_to_path:
 	export PATH="$PATH:$(go env GOPATH)/bin"
+
+run_server:
+	go run server/server.go
+
+test:
+	go test ./...
