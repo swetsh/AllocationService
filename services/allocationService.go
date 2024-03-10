@@ -23,7 +23,7 @@ func (s *Server) AssignOrderToDeliveryPerson(ctx context.Context, req *pb.OrderR
 
 	for _, deliveryPerson := range deliveryPersons {
 		if deliveryPerson.OrderID == -1 {
-			api.PutOrder("http://localhost:8081/api/v1/delivery-persons", 1, 1)
+			api.PutOrder("http://localhost:8081/api/v1/delivery-persons", deliveryPerson.ID, int(req.Id))
 		}
 		fmt.Println(deliveryPerson)
 	}

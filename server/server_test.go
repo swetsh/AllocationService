@@ -1,12 +1,20 @@
 package main
 
 import (
+	"log"
+	"net"
 	"testing"
 )
 
-func TestOrderAlloaction(t *testing.T) {
+func TestServer(t *testing.T) {
+	go main()
 
-	// srv := &service.Server{}
+	conn, err := net.Dial("tcp", "localhost:8089")
+	if err != nil {
+		t.Fatalf("failed to connect to server: %s", err)
+	}
+	defer conn.Close()
 
-	// ctx := context.Background()
+	log.Println("Server started successfully")
+
 }

@@ -30,5 +30,7 @@ func PutOrder(url string, personID int, orderID int) error {
 		return fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
+	fmt.Println(resp)
+
 	return nil
 }
