@@ -9,4 +9,4 @@ run_server:
 	go run server/server.go
 
 test:
-	go test ./...
+	go test ./... -v

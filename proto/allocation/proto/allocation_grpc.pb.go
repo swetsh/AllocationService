@@ -22,8 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AllocationServiceClient interface {
-	AssignOrderToDeliveryPerson(ctx context.Context, in *Order, opts ...grpc.CallOption) (*Order, error)
-	UpdateOrderStatus(ctx context.Context, in *Order, opts ...grpc.CallOption) (*Order, error)
+	AssignOrderToDeliveryPerson(ctx context.Context, in *OrderRequest, opts ...grpc.CallOption) (*OrderResponse, error)
 }
 
 type allocationServiceClient struct {
@@ -34,18 +33,9 @@ func NewAllocationServiceClient(cc grpc.ClientConnInterface) AllocationServiceCl
 	return &allocationServiceClient{cc}
 }
 
-func (c *allocationServiceClient) AssignOrderToDeliveryPerson(ctx context.Context, in *Order, opts ...grpc.CallOption) (*Order, error) {
-	out := new(Order)
+func (c *allocationServiceClient) AssignOrderToDeliveryPerson(ctx context.Context, in *OrderRequest, opts ...grpc.CallOption) (*OrderResponse, error) {
+	out := new(OrderResponse)
 	err := c.cc.Invoke(ctx, "/AllocationService/AssignOrderToDeliveryPerson", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *allocationServiceClient) UpdateOrderStatus(ctx context.Context, in *Order, opts ...grpc.CallOption) (*Order, error) {
-	out := new(Order)
-	err := c.cc.Invoke(ctx, "/AllocationService/UpdateOrderStatus", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -56,8 +46,7 @@ func (c *allocationServiceClient) UpdateOrderStatus(ctx context.Context, in *Ord
 // All implementations must embed UnimplementedAllocationServiceServer
 // for forward compatibility
 type AllocationServiceServer interface {
-	AssignOrderToDeliveryPerson(context.Context, *Order) (*Order, error)
-	UpdateOrderStatus(context.Context, *Order) (*Order, error)
+	AssignOrderToDeliveryPerson(context.Context, *OrderRequest) (*OrderResponse, error)
 	mustEmbedUnimplementedAllocationServiceServer()
 }
 
@@ -65,11 +54,8 @@ type AllocationServiceServer interface {
 type UnimplementedAllocationServiceServer struct {
 }
 
-func (UnimplementedAllocationServiceServer) AssignOrderToDeliveryPerson(context.Context, *Order) (*Order, error) {
+func (UnimplementedAllocationServiceServer) AssignOrderToDeliveryPerson(context.Context, *OrderRequest) (*OrderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AssignOrderToDeliveryPerson not implemented")
-}
-func (UnimplementedAllocationServiceServer) UpdateOrderStatus(context.Context, *Order) (*Order, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateOrderStatus not implemented")
 }
 func (UnimplementedAllocationServiceServer) mustEmbedUnimplementedAllocationServiceServer() {}
 
@@ -85,7 +71,7 @@ func RegisterAllocationServiceServer(s grpc.ServiceRegistrar, srv AllocationServ
 }
 
 func _AllocationService_AssignOrderToDeliveryPerson_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Order)
+	in := new(OrderRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -97,25 +83,7 @@ func _AllocationService_AssignOrderToDeliveryPerson_Handler(srv interface{}, ctx
 		FullMethod: "/AllocationService/AssignOrderToDeliveryPerson",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AllocationServiceServer).AssignOrderToDeliveryPerson(ctx, req.(*Order))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AllocationService_UpdateOrderStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Order)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AllocationServiceServer).UpdateOrderStatus(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/AllocationService/UpdateOrderStatus",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AllocationServiceServer).UpdateOrderStatus(ctx, req.(*Order))
+		return srv.(AllocationServiceServer).AssignOrderToDeliveryPerson(ctx, req.(*OrderRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -130,10 +98,6 @@ var AllocationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AssignOrderToDeliveryPerson",
 			Handler:    _AllocationService_AssignOrderToDeliveryPerson_Handler,
-		},
-		{
-			MethodName: "UpdateOrderStatus",
-			Handler:    _AllocationService_UpdateOrderStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -10,12 +10,6 @@ import (
 )
 
 func main() {
-
-	// dbManager := &config.DBManager{}
-	// if err := dbManager.DatabaseConnection(); err != nil {
-	// 	log.Fatalf("failed to connect to database: %s", err)
-	// }
-
 	lis, err := net.Listen("tcp", ":8089")
 	if err != nil {
 		log.Fatalf("failed to listen %s", err)
