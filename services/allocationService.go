@@ -1,27 +1,16 @@
 package service
 
 import (
+	"allocation-service/api"
 	pb "allocation-service/proto/allocation/proto"
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
 )
 
 type Server struct {
 	pb.UnimplementedAllocationServiceServer
-}
-
-type Location struct {
-	GeoCoordinate string `json:"geoCoordinate"`
-}
-
-type DeliveryPerson struct {
-	ID       int      `json:"id"`
-	Name     string   `json:"name"`
-	Location Location `json:"location"`
-	OrderID  int      `json:"orderId"`
 }
 
 func PutOrder(orderId int) {
@@ -57,17 +46,13 @@ func PutOrder(orderId int) {
 
 func (s *Server) AssignOrderToDeliveryPerson(ctx context.Context, req *pb.OrderRequest) (*pb.OrderResponse, error) {
 
-	resp, err := http.Get("http://localhost:8081/api/v1/delivery-persons")
+	deliveryPersons, err := api.GetDeliveryPersons("http://localhost:8081/api/v1/delivery-persons")
 
 	if err != nil {
-		fmt.Printf("Error %s\n", err)
 		return nil, err
 	}
 
-	var deliveryPersons []*DeliveryPerson
-	if err := json.NewDecoder(resp.Body).Decode(&deliveryPersons); err != nil {
-		return nil, err
-	}
+	fmt.Println(deliveryPersons, err)
 
 	for _, deliveryPerson := range deliveryPersons {
 		if deliveryPerson.OrderID == -1 {
