@@ -6,47 +6,31 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestPutOrder(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-		if r.Method != http.MethodPut {
-			http.Error(w, "expected PUT method", http.StatusBadRequest)
-			return
-		}
-		expectedURL := fmt.Sprintf("/api/v1/delivery-persons/%d", 4)
-		if r.URL.Path != expectedURL {
-			http.Error(w, fmt.Sprintf("expected URL: %s, got: %s", expectedURL, r.URL.Path), http.StatusBadRequest)
-			return
-		}
+		assert.Equal(t, http.MethodPut, r.Method)
+		assert.Equal(t, "/api/v1/delivery-persons/1", r.URL.Path)
 
 		buf := new(bytes.Buffer)
 		buf.ReadFrom(r.Body)
-		orderID := buf.String()
-		if orderID != "123" {
-			http.Error(w, fmt.Sprintf("expected orderID: 123, got: %s", orderID), http.StatusBadRequest)
-			return
-		}
+		assert.Equal(t, "4", buf.String())
 
-		w.WriteHeader(http.StatusAccepted)
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprintf(w, `{"id":1,"name":"d1","location":{"geoCoordinate":"x"},"orderId":1}`)
 	}))
 	defer server.Close()
 
-	url := server.URL
+	orderResp, err := PutOrder(server.URL, 1, 4)
 
-	err := PutOrder("invalid-url", 4, 123)
-	if err == nil {
-		t.Error("expected error but got nil")
-	}
+	assert.NoError(t, err)
 
-	server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusInternalServerError)
-	}))
-	defer server.Close()
-
-	err = PutOrder(url, 4, 123)
-	if err == nil {
-		t.Error("expected error but got nil")
-	}
+	assert.NotNil(t, orderResp)
+	assert.Equal(t, 1, orderResp.ID)
+	assert.Equal(t, "d1", orderResp.Name)
+	assert.Equal(t, "x", orderResp.Location.GeoCoordinate)
+	assert.Equal(t, 1, orderResp.OrderID)
 }

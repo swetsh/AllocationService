@@ -1,6 +1,6 @@
 package responses
 
-type DeliveryPerson struct {
+type OrderResponse struct {
 	ID       int      `json:"id"`
 	Name     string   `json:"name"`
 	Location Location `json:"location"`

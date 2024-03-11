@@ -3,7 +3,9 @@ package service
 import (
 	"allocation-service/api"
 	pb "allocation-service/proto/allocation/proto"
+	"allocation-service/responses"
 	"context"
+	"errors"
 	"fmt"
 )
 
@@ -21,12 +23,22 @@ func (s *Server) AssignOrderToDeliveryPerson(ctx context.Context, req *pb.OrderR
 
 	fmt.Println(deliveryPersons, err)
 
+	var orderResponse *responses.OrderResponse
+
 	for _, deliveryPerson := range deliveryPersons {
 		if deliveryPerson.OrderID == -1 {
-			api.PutOrder("http://localhost:8081/api/v1/delivery-persons", deliveryPerson.ID, int(req.Id))
+			orderResponse, err = api.PutOrder("http://localhost:8081/api/v1/delivery-persons", deliveryPerson.ID, int(req.Id))
+			fmt.Println(orderResponse, err)
 		}
-		fmt.Println(deliveryPerson)
 	}
 
-	return &pb.OrderResponse{}, nil
+	if orderResponse == nil {
+		return nil, errors.New("no available delivery person to assign the order")
+	}
+
+	return &pb.OrderResponse{
+		Id:     int64(orderResponse.OrderID),
+		UserId: int64(orderResponse.ID),
+		Status: pb.OrderStatus_ASSIGNED,
+	}, nil
 }
