@@ -37,8 +37,8 @@ func (s *Server) AssignOrderToDeliveryPerson(ctx context.Context, req *pb.OrderR
 	}
 
 	return &pb.OrderResponse{
-		Id:     int64(orderResponse.OrderID),
-		UserId: int64(orderResponse.ID),
-		Status: pb.OrderStatus_ASSIGNED,
+		Id:               int64(orderResponse.OrderID),
+		DeliveryPersonId: int64(orderResponse.ID),
+		Status:           pb.OrderStatus_ASSIGNED,
 	}, nil
 }

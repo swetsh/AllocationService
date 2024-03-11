@@ -13,7 +13,7 @@ import (
 func TestPutOrder(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(t, http.MethodPut, r.Method)
-		assert.Equal(t, "/api/v1/delivery-persons/1", r.URL.Path)
+		assert.Equal(t, "/1", r.URL.Path)
 
 		buf := new(bytes.Buffer)
 		buf.ReadFrom(r.Body)
