@@ -11,6 +11,7 @@ import (
 )
 
 func TestPutOrder(t *testing.T) {
+
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(t, http.MethodPut, r.Method)
 		assert.Equal(t, "/1", r.URL.Path)
@@ -18,13 +19,21 @@ func TestPutOrder(t *testing.T) {
 		buf := new(bytes.Buffer)
 		buf.ReadFrom(r.Body)
 		assert.Equal(t, "4", buf.String())
+		assert.NotEqual(t, "3", buf.String())
 
-		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusAccepted)
 		fmt.Fprintf(w, `{"id":1,"name":"d1","location":{"geoCoordinate":"x"},"orderId":1}`)
 	}))
+
 	defer server.Close()
 
-	orderResp, err := PutOrder(server.URL, 1, 4)
+	url := server.URL
+
+	orderResp, err := PutOrder(url, 1, 4)
+
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
 
 	assert.NoError(t, err)
 
