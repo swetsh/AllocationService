@@ -3,9 +3,11 @@ package api
 import (
 	"allocation-service/responses"
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 )
 
 func PutOrder(url string, personID int, orderID int) (*responses.OrderResponse, error) {
@@ -21,6 +23,11 @@ func PutOrder(url string, personID int, orderID int) (*responses.OrderResponse, 
 	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}
+
+	auth := os.Getenv("USERNAME") + ":" + os.Getenv("PASSWORD")
+	fmt.Println(auth)
+	basicAuth := "Basic " + base64.StdEncoding.EncodeToString([]byte(auth))
+	req.Header.Set("Authorization", basicAuth)
 
 	resp, err := client.Do(req)
 	if err != nil {

@@ -4,6 +4,8 @@ import (
 	"log"
 	"net"
 	"testing"
+
+	_ "github.com/joho/godotenv"
 )
 
 func TestServer(t *testing.T) {
