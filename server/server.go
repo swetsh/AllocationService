@@ -6,10 +6,16 @@ import (
 	"log"
 	"net"
 
+	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
 )
 
 func main() {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	lis, err := net.Listen("tcp", ":8089")
 	if err != nil {
 		log.Fatalf("failed to listen %s", err)
